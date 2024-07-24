@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>MDIA 2294: WK6_EX2</title>
+	<link rel="stylesheet" href="css/satochan.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+</head>
+
+<body>
+	<h1>Explore Satochan in Japan!</h1>
+	<div class="container">
+		<p> Satochan is a mascot of Sato Pharmaceutical</p>
+		<a class="cta_LearnMore" href="https://www.sato-seiyaku.co.jp/company/en/" target="_blank">Official website</a>
+	</div>
+	<div style="text-align:center;">
+		<div><img id="main-image" /></div>
+		<div class='flex'>
+			<div><img id="nav_start" src="images/スキップボタン　左.png" /></div>
+			<div><img id="nav_prev" src="images/矢印ボタン　左1.png" /></div>
+			<div id="thumbnails">
+				<!-- Thumbnail images will go here -->
+			</div>
+			<div><img id="nav_next" src="images/矢印ボタン　右1.png" /></div>
+			<div><img id="nav_end" src="images/スキップボタン　右.png" /></div>
+		</div>
+	</div>
+	<div class="footer_box">
+		<p>Yurino Murakami</p>
+	</div>
+
+	<script>
+
+		// Yurino Murakami A01370533 Assignment 2
+		// Track the index of the currently displayed image
+		let currentImageIndex = 0;
+
+		// The array containing five string elements which are names of the images in the slideshow, 
+		//             index     0        1        2        3         4 
+		const SatochanOrder = ["Sato1", "Sato2", "Sato3", "Sato4", "Sato5"];
+
+		// Select each navigation button from the DOM 
+		const firstBtn = document.querySelector("#nav_start");
+		const prevBtn = document.querySelector("#nav_prev");
+		const nextBtn = document.querySelector("#nav_next");
+		const lastBtn = document.querySelector("#nav_end");
+
+		// Function to set the main image based on the index provided.
+		const setMainImages = (rootIndex) => { // = () =>  is the syntax for an arrow function which is a shorter way to write function expressions like a rocket.
+			// Update the current image index to the new index provided, we will use it constantly from now on
+			currentImageIndex = rootIndex;
+
+			// Select the main image element in the DOM and update its src attribute
+			// The path is the base path "images/", the image name from SatochanOrder array (*use index),
+   			// and the suffix '_Main.jpg'.
+			document.querySelector("#main-image").src = "images/" + SatochanOrder[rootIndex] + '_Main.jpg';
+			// Now the main image should be ready to display within the page load by line 143.
+
+			// Call the updateThumb function line 91 to update the thumbnail indicators based on the current image index.
+			updateThumb(currentImageIndex);
+		}
+
+		
+		// Sets up the thumbnails and adds event listeners to each.
+		// This function creates thumbnail images for each item in the SatochanOrder array,
+		const setThumbnails = () => {
+			// Loop through each item in the SatochanOrder array
+			SatochanOrder.forEach((root, index) => {
+				// Create a new img element for the thumbnail, root represents the current element of the SatochanOrder array.
+				const Thumbs = document.createElement("img");
+				// Set the src attribute of the thumbnail like we did for line 59
+				Thumbs.src = "images/" + root + '_Thumb.jpg';
+				// Set the class name for the thumbnails we created to "clickable inactive-thumbnail", basically we added the css through Js
+				Thumbs.className = "clickable inactive-thumbnail";
+				// Add a 'click' event listener to the thumbnail
+       			// When the thumbnail is clicked, it will call setMainImages function 
+        		// and pass the current index to update the main image
+				Thumbs.addEventListener("click", () => setMainImages(index));
+				// "Append" the thumbnail to the thumbnails container in the DOM, 
+				document.querySelector("#thumbnails").append(Thumbs);
+			});
+			// To highlight the first thumbnail,
+			updateThumb(0); // Initial update of thumbnail indicator
+		}
+
+		//Updates the thumbnail indicators to show which thumbnail is currently active.
+
+		const updateThumb = (currentIndex) => {
+		// Select all elements with the class "clickable", from line 77, we added this class to the all thumbnails.
+			const thumbnails = document.querySelectorAll(".clickable");
+			// Loop through each thumbnail element
+			thumbnails.forEach((thumb, index) => { //thumb is the current thumbnail element, and index is its position in the Index.
+
+				// Check if the current thumbnail index exactly matches the provided currentIndex
+				if (index === currentIndex) {
+					// If it matches, add the 'active-thumbnail' class and remove the 'inactive-thumbnail' class from the css file 
+					thumb.classList.add('active-thumbnail');
+					thumb.classList.remove('inactive-thumbnail');
+				} else {
+					// If it doesn't match, add the 'inactive-thumbnail' class and remove the 'active-thumbnail' class
+					thumb.classList.add('inactive-thumbnail');
+					thumb.classList.remove('active-thumbnail');
+				}
+			});
+		};
+
+		// Navigation functions
+
+		//  Goes to the first image in the slideshow.
+		const goToStart = () => setMainImages(0);
+		// / Set the main image to the first image (index 0) and update the thumbnails
+
+		//  Goes to the first image in the slideshow.
+		const goToPrev = () => setMainImages((currentImageIndex <= 0) ? SatochanOrder.length - 1 : currentImageIndex - 1);
+		// .length is a property that returns the number of elements in an array,
+		// Calculate the index of the previous image, 
+		// If the currentImageIndex is = 0( the first image),wrap around to the last image (index SatochanOrder.length - 1)
+		// other cases ( second-fifth image), currentImageIndex - 1
+
+		//  Goes to the first image in the slideshow.
+		const goToNext = () => setMainImages((currentImageIndex < SatochanOrder.length - 1) ? currentImageIndex + 1 : 0);
+		// Calculate the index of the next image
+		
+		// If currentImageIndex is lass than at the last image (Length is '5' - 1 = 4 which is the last image index), currentImageIndex + 1
+		// If at the last image,  wrap around to the first image (index 0)
+
+		// Goes to the last image in the slideshow.
+		const goToLast = () => setMainImages(SatochanOrder.length - 1);
+		// Set the main image to the last image (index SatochanOrder.length - 1) and update the thumbnails	
+
+		// Add event listeners to the navigation buttons
+		firstBtn.addEventListener("click", goToStart);
+		prevBtn.addEventListener("click", goToPrev);
+		nextBtn.addEventListener("click", goToNext);
+		lastBtn.addEventListener("click", goToLast);
+
+		// Set the initial main image and thumbnails when the page loads
+
+		// Display the first image and initialize the thumbnails
+		setMainImages(0);
+
+		// Add the thumbnails section with thumbnail images
+		setThumbnails();
+		
+	</script>
+	
+</body>
+
+</html>
